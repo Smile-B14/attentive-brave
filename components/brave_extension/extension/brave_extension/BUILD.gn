@@ -21,6 +21,10 @@ transpile_web_ui("brave_extension") {
       "webstore",
       rebase_path("webstore.ts"),
     ],
+    [
+      "attentive",
+      rebase_path("attentive.ts"),
+    ],
   ]
 
   # what is the directory / pack name
