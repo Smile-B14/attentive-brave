@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Attentive Brave",
   "description": "Adds the mandatory sight-pump overlay for Attentive Brave testing.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "permissions": ["storage"],
   "content_scripts": [
     {

@@ -97,13 +97,13 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         bottom: 12px;
         display: flex;
         gap: 5px;
-        height: 74px;
-        padding: 5px;
+        height: 90px;
+        padding: 7px;
         pointer-events: none;
         position: absolute;
         right: 12px;
         transition: background 120ms ease, border-color 120ms ease;
-        width: 154px;
+        width: 184px;
         z-index: 6;
       }
 
@@ -116,18 +116,18 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       #eye-card {
         align-items: center;
         display: flex;
-        height: 48px;
+        height: 58px;
         justify-content: center;
         position: relative;
-        width: 74px;
+        width: 90px;
       }
 
       #eye-shaker {
         align-items: center;
         display: flex;
-        height: 46px;
+        height: 56px;
         justify-content: center;
-        width: 72px;
+        width: 88px;
       }
 
       #eye-card.overpressure #eye-shaker {
@@ -144,11 +144,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
 
       #eye {
         filter: drop-shadow(0 0 11px rgba(71, 202, 255, .34));
-        height: 44px;
+        height: 53px;
         overflow: visible;
         transform-origin: 60px 35px;
         transition: transform 100ms linear;
-        width: 72px;
+        width: 87px;
       }
 
       #eye-outline {
@@ -175,15 +175,15 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       #percent {
         background: rgba(4, 9, 15, .36);
         border-radius: 99px;
-        bottom: 4px;
+        bottom: 5px;
         color: #bff4ff;
-        font-size: 10px;
+        font-size: 11px;
         font-variant-numeric: tabular-nums;
         font-weight: 850;
-        left: 13px;
+        left: 17px;
         letter-spacing: .03em;
-        min-width: 52px;
-        padding: 3px 7px;
+        min-width: 58px;
+        padding: 3px 8px;
         position: absolute;
         text-align: center;
         transition: opacity 120ms ease;
@@ -195,12 +195,12 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         background: rgba(4, 9, 15, .3);
         border-radius: 99px;
         color: rgba(215, 247, 255, .8);
-        font-size: 8px;
+        font-size: 9px;
         font-variant-numeric: tabular-nums;
         font-weight: 800;
-        left: 17px;
+        left: 18px;
         letter-spacing: .03em;
-        min-width: 44px;
+        min-width: 56px;
         padding: 2px 5px;
         position: absolute;
         text-align: center;
@@ -211,11 +211,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       #crank-count.hidden { opacity: 0; }
 
       #crank-wrap {
-        height: 62px;
+        height: 76px;
         position: relative;
         touch-action: none;
         user-select: none;
-        width: 62px;
+        width: 76px;
       }
 
       #crank-progress {
@@ -236,13 +236,13 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         border: 1px solid rgba(185, 242, 255, .5);
         border-radius: 50%;
         cursor: grab;
-        height: 56px;
+        height: 68px;
         left: 3px;
         outline: none;
         pointer-events: auto;
         position: absolute;
         top: 3px;
-        width: 56px;
+        width: 68px;
         will-change: transform;
         z-index: 1;
       }
@@ -252,11 +252,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       #crank-spoke {
         background: linear-gradient(90deg, #567482, #d5f7ff, #567482);
         border-radius: 99px;
-        height: 4px;
-        left: 9px;
+        height: 5px;
+        left: 11px;
         position: absolute;
-        top: 25px;
-        width: 36px;
+        top: 31px;
+        width: 44px;
       }
 
       #crank-knob {
@@ -264,11 +264,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         border: 1px solid #e3fbff;
         border-radius: 50%;
         box-shadow: 0 0 7px rgba(77, 217, 247, .55);
-        height: 12px;
+        height: 14px;
         position: absolute;
-        right: 4px;
-        top: 21px;
-        width: 12px;
+        right: 5px;
+        top: 26px;
+        width: 14px;
       }
 
       #crank-center {
@@ -276,11 +276,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         border: 2px solid #274553;
         border-radius: 50%;
         box-shadow: 0 0 7px rgba(93, 221, 250, .48);
-        height: 10px;
-        left: 22px;
+        height: 12px;
+        left: 27px;
         position: absolute;
-        top: 22px;
-        width: 10px;
+        top: 27px;
+        width: 12px;
       }
 
       #crank-wrap.cooldown #crank-wheel {
@@ -321,7 +321,7 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       </div>
 
       <div id="percent" aria-live="polite">100%</div>
-      <div id="crank-count" aria-label="Completed crank turns">↻ 0</div>
+      <div id="crank-count" aria-label="Completed crank turns">TURNS 0</div>
 
       <div id="crank-wrap" aria-label="Sight crank">
         <div id="crank-progress"></div>
@@ -345,6 +345,7 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
   const eyeCard = shadow.querySelector<HTMLElement>('#eye-card')!
   const iris = shadow.querySelector<SVGCircleElement>('#iris')!
   const pupil = shadow.querySelector<SVGCircleElement>('#pupil')!
+  const eyeGlint = shadow.querySelector<SVGCircleElement>('#eye-glint')!
   const veins = shadow.querySelectorAll<SVGPathElement>('.vein')
   const crankWrap = shadow.querySelector<HTMLElement>('#crank-wrap')!
   const crankWheel = shadow.querySelector<HTMLElement>('#crank-wheel')!
@@ -355,8 +356,10 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
   let pointerId: number | null = null
   let lastPointerAngle = 0
   let crankRotation = 0
+  let automaticRotation = 0
   let turnProgress = 0
   let cooldownUntil = 0
+  let lastFrameTime = performance.now()
 
   const clampSight = (value: number) => Math.min(MAX_SIGHT, Math.max(0, value))
 
@@ -405,20 +408,24 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
   }
 
   const updateCrankProgress = () => {
-    const ratio = Math.min(1, turnProgress / FULL_CRANK_TURN)
-    crankProgress.style.background = `conic-gradient(#74eaff ${ratio * 360}deg, transparent 0)`
+    const ratio = Math.min(1, Math.abs(turnProgress) / FULL_CRANK_TURN)
+    const color = turnProgress < 0 ? '#ff845c' : '#74eaff'
+    crankProgress.style.background = `conic-gradient(${color} ${ratio * 360}deg, transparent 0)`
     crankWheel.setAttribute('aria-valuenow', Math.round(ratio * 100).toString())
   }
 
-  const completeCrankTurn = () => {
+  const completeCrankTurn = (clockwise: boolean) => {
     if (performance.now() < cooldownUntil) {
       return
     }
     cooldownUntil = performance.now() + PUMP_COOLDOWN_MS
     crankWrap.classList.add('cooldown')
-    const nextSight = sightAt(Date.now()) + GAIN_PER_PUMP
+    const nextSight =
+      sightAt(Date.now()) + (clockwise ? GAIN_PER_PUMP : -GAIN_PER_PUMP)
     saveSight(nextSight, state.cranks + 1)
-    createAirBurst(nextSight > 100)
+    if (clockwise) {
+      createAirBurst(nextSight > 100)
+    }
     window.setTimeout(
       () => crankWrap.classList.remove('cooldown'),
       PUMP_COOLDOWN_MS,
@@ -462,12 +469,17 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
     if (delta < -Math.PI) delta += FULL_CRANK_TURN
     lastPointerAngle = angle
     crankRotation += delta
-    turnProgress += Math.abs(delta)
-    crankWheel.style.transform = `rotate(${crankRotation}rad)`
+    turnProgress += delta
 
     if (turnProgress >= FULL_CRANK_TURN && performance.now() >= cooldownUntil) {
       turnProgress -= FULL_CRANK_TURN
-      completeCrankTurn()
+      completeCrankTurn(true)
+    } else if (
+      turnProgress <= -FULL_CRANK_TURN
+      && performance.now() >= cooldownUntil
+    ) {
+      turnProgress += FULL_CRANK_TURN
+      completeCrankTurn(false)
     }
     updateCrankProgress()
     event.preventDefault()
@@ -488,13 +500,23 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
     }
   })
 
-  const render = () => {
+  const render = (frameTime: number) => {
     const sight = sightAt(Date.now())
     const blindness = sight <= 100 ? 1 - sight / 100 : 0
     const underBlur = sight < 40 ? ((40 - sight) / 40) * 16 : 0
     const pressure = sight > 100 ? (sight - 100) / 80 : 0
     const glareBlur = pressure * 12
     const blackout = sight <= 0.02
+    const frameSeconds = Math.min(
+      0.05,
+      Math.max(0, frameTime - lastFrameTime) / 1000,
+    )
+    lastFrameTime = frameTime
+
+    if (sight < 100) {
+      automaticRotation -= frameSeconds * (0.55 + blindness * 2.2)
+    }
+    crankWheel.style.transform = `rotate(${crankRotation + automaticRotation}rad)`
 
     darkVeil.style.opacity = blindness.toFixed(3)
     darkVeil.style.backdropFilter = `blur(${underBlur.toFixed(1)}px)`
@@ -515,11 +537,15 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
     percent.textContent = `${Math.floor(sight)}%`
     percent.classList.toggle('hidden', blackout)
     percent.style.color = pressure > 0 ? '#ffd15c' : '#bff4ff'
-    crankCount.textContent = `↻ ${state.cranks}`
+    crankCount.textContent = `TURNS ${state.cranks}`
     crankCount.classList.toggle('hidden', blackout)
 
-    const aperture = sight <= 100 ? Math.max(0.07, sight / 100) : 1
+    const aperture = sight <= 100 ? Math.max(0.012, sight / 100) : 1
     eye.style.transform = `scaleY(${aperture})`
+    const eyeContentsOpacity = Math.min(1, Math.max(0, sight / 12))
+    iris.style.opacity = eyeContentsOpacity.toFixed(2)
+    pupil.style.opacity = eyeContentsOpacity.toFixed(2)
+    eyeGlint.style.opacity = eyeContentsOpacity.toFixed(2)
     eyeCard.classList.toggle('overpressure', pressure > 0.01)
     eyeCard.style.setProperty('--shake', `${(1 + pressure * 4).toFixed(1)}px`)
     pupil.setAttribute('r', (8 - pressure * 5.5).toFixed(2))

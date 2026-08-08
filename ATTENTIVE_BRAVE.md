@@ -10,7 +10,10 @@ ms, and gains 3 points after each completed crank turn.
   eye, percentage badge, and circular mouse/touch crank.
 - Rotating the crank one complete revolution restores 3 points. Turns have a 150
   ms cooldown and sight is capped at 180%.
-- A compact persistent counter records completed crank revolutions.
+- Counterclockwise turns remove 3 points. Both directions increase the compact
+  persistent turn counter.
+- As sight closes, the crank visually rotates backward without affecting power
+  or the counter.
 - Below 100%, the page darkens with `1 - sight / 100` opacity.
 - Below 40%, blur rises progressively to 16 px at 0%.
 - At 0%, the website viewport is silently black and blocked. The percentage is
