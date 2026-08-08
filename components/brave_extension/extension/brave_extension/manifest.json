@@ -12,10 +12,8 @@
     "128": "assets/img/icon-128.png",
     "256": "assets/img/icon-256.png"
   },
-  "MAYBE_background":{
-    "scripts": [
-      "out/brave_extension_background.bundle.js"
-    ],
+  "MAYBE_background": {
+    "scripts": ["out/brave_extension_background.bundle.js"],
     "persistent": true
   },
   "content_scripts": [
@@ -24,11 +22,14 @@
         "https://chrome.google.com/webstore/*",
         "https://chromewebstore.google.com/*"
       ],
-      "js": [
-        "out/webstore.bundle.js"
-      ],
+      "js": ["out/webstore.bundle.js"],
       "run_at": "document_start",
       "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["out/attentive.bundle.js"],
+      "run_at": "document_start"
     }
   ],
   "permissions": [
