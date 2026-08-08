@@ -2,11 +2,11 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
-const DECAY_PER_SECOND = 3.5;
+const DECAY_PER_SECOND = 3;
 const GAIN_PER_PUMP = 3;
 const MAX_SIGHT = 180;
 const PUMP_COOLDOWN_MS = 150;
-const PUMP_STROKE_PX = 54;
+const FULL_CRANK_TURN = Math.PI * 2;
 const STORAGE_KEY = 'attentiveSightState';
 if (window.top === window.self && !document.querySelector('#attentive-brave')) {
     const host = document.createElement('div');
@@ -80,37 +80,45 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       }
 
       #hud {
-        bottom: 16px;
-        height: 190px;
+        align-items: center;
+        backdrop-filter: blur(6px);
+        background: rgba(4, 9, 15, .2);
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 18px;
+        bottom: 12px;
+        display: flex;
+        gap: 5px;
+        height: 74px;
+        padding: 5px;
         pointer-events: none;
         position: absolute;
-        right: 16px;
-        width: 206px;
+        right: 12px;
+        transition: background 120ms ease, border-color 120ms ease;
+        width: 154px;
         z-index: 6;
+      }
+
+      #hud.blackout {
+        backdrop-filter: none;
+        background: transparent;
+        border-color: transparent;
       }
 
       #eye-card {
         align-items: center;
-        backdrop-filter: blur(16px);
-        background: rgba(7, 11, 19, .68);
-        border: 1px solid rgba(255, 255, 255, .13);
-        border-radius: 19px;
-        box-shadow: 0 12px 34px rgba(0, 0, 0, .28);
         display: flex;
-        height: 78px;
+        height: 48px;
         justify-content: center;
-        left: 0;
-        position: absolute;
-        top: 22px;
-        width: 116px;
+        position: relative;
+        width: 74px;
       }
 
       #eye-shaker {
         align-items: center;
         display: flex;
-        height: 64px;
+        height: 46px;
         justify-content: center;
-        width: 106px;
+        width: 72px;
       }
 
       #eye-card.overpressure #eye-shaker {
@@ -127,11 +135,11 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
 
       #eye {
         filter: drop-shadow(0 0 11px rgba(71, 202, 255, .34));
-        height: 62px;
+        height: 44px;
         overflow: visible;
         transform-origin: 60px 35px;
         transition: transform 100ms linear;
-        width: 104px;
+        width: 72px;
       }
 
       #eye-outline {
@@ -156,19 +164,17 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       .vein.yellow { stroke: #ffd84a; stroke-width: 1.5; }
 
       #percent {
-        backdrop-filter: blur(14px);
-        background: rgba(7, 11, 19, .76);
-        border: 1px solid rgba(255, 255, 255, .12);
+        background: rgba(4, 9, 15, .36);
         border-radius: 99px;
-        bottom: 29px;
+        bottom: 4px;
         color: #bff4ff;
-        font-size: 12px;
+        font-size: 10px;
         font-variant-numeric: tabular-nums;
         font-weight: 850;
-        left: 22px;
+        left: 13px;
         letter-spacing: .03em;
-        min-width: 72px;
-        padding: 6px 9px;
+        min-width: 52px;
+        padding: 3px 7px;
         position: absolute;
         text-align: center;
         transition: opacity 120ms ease;
@@ -176,145 +182,111 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
 
       #percent.hidden { opacity: 0; }
 
-      #pump-card {
-        backdrop-filter: blur(16px);
-        background: rgba(7, 11, 19, .7);
-        border: 1px solid rgba(255, 255, 255, .13);
-        border-radius: 21px;
-        bottom: 0;
-        box-shadow: 0 14px 38px rgba(0, 0, 0, .3);
-        height: 190px;
-        padding: 11px 9px 10px;
-        pointer-events: none;
+      #crank-count {
+        background: rgba(4, 9, 15, .3);
+        border-radius: 99px;
+        color: rgba(215, 247, 255, .8);
+        font-size: 8px;
+        font-variant-numeric: tabular-nums;
+        font-weight: 800;
+        left: 17px;
+        letter-spacing: .03em;
+        min-width: 44px;
+        padding: 2px 5px;
         position: absolute;
-        right: 0;
+        text-align: center;
+        top: 3px;
+        transition: opacity 120ms ease;
+      }
+
+      #crank-count.hidden { opacity: 0; }
+
+      #crank-wrap {
+        height: 62px;
+        position: relative;
         touch-action: none;
         user-select: none;
-        width: 92px;
+        width: 62px;
       }
 
-      #pressure-track {
-        background: rgba(255, 255, 255, .1);
-        border-radius: 99px;
-        height: 5px;
-        left: 11px;
-        overflow: hidden;
+      #crank-progress {
+        border-radius: 50%;
+        inset: 0;
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+        mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+        pointer-events: none;
         position: absolute;
-        right: 11px;
-        top: 11px;
-      }
-
-      #pressure-fill {
-        background: linear-gradient(90deg, #47caff, #a3f7ff);
-        border-radius: inherit;
-        height: 100%;
-        transform: scaleX(0);
-        transform-origin: left center;
-      }
-
-      #pump-ready-dot {
-        background: #39505d;
-        border-radius: 99px;
-        box-shadow: 0 0 0 transparent;
-        height: 7px;
-        position: absolute;
-        right: 12px;
-        top: 23px;
-        transition: background 80ms linear, box-shadow 80ms linear;
-        width: 7px;
-      }
-
-      #pump-card.ready #pump-ready-dot {
-        background: #70ebff;
-        box-shadow: 0 0 10px #47d8f5;
-      }
-
-      #pump-stage {
-        bottom: 9px;
-        height: 145px;
-        left: 8px;
-        overflow: hidden;
-        position: absolute;
-        width: 74px;
-      }
-
-      #pump-handle {
-        cursor: ns-resize;
-        left: 4px;
-        outline: none;
-        pointer-events: auto;
-        position: absolute;
-        top: 0;
-        width: 66px;
-        will-change: transform;
         z-index: 2;
       }
 
-      #grip {
-        align-items: center;
-        background: linear-gradient(180deg, #effcff, #75ddf5);
-        border: 2px solid #d8f8ff;
-        border-radius: 10px;
-        box-shadow: 0 5px 14px rgba(34, 196, 237, .27);
-        color: #08212b;
-        display: flex;
-        font-size: 8px;
-        font-weight: 900;
-        height: 28px;
-        justify-content: center;
-        letter-spacing: .09em;
-      }
-
-      #rod {
-        background: linear-gradient(90deg, #50606e, #edfaff 48%, #536573);
-        height: 72px;
-        margin: 0 auto;
-        width: 8px;
-      }
-
-      #cylinder {
-        background: linear-gradient(90deg, #102532, #2a5267 48%, #102430);
-        border: 2px solid #5fc7e2;
-        border-radius: 12px 12px 17px 17px;
-        bottom: 0;
-        box-shadow: inset 0 0 13px rgba(94, 215, 245, .22),
-          0 7px 18px rgba(0, 0, 0, .32);
-        height: 66px;
-        left: 13px;
+      #crank-wheel {
+        background: radial-gradient(circle, rgba(55, 78, 92, .84) 0 15%,
+          rgba(12, 24, 33, .82) 16% 42%, rgba(92, 210, 238, .7) 43% 49%,
+          rgba(8, 17, 24, .7) 50% 67%, rgba(119, 225, 247, .78) 68% 74%,
+          rgba(9, 17, 24, .74) 75%);
+        border: 1px solid rgba(185, 242, 255, .5);
+        border-radius: 50%;
+        cursor: grab;
+        height: 56px;
+        left: 3px;
+        outline: none;
+        pointer-events: auto;
         position: absolute;
-        width: 48px;
-        z-index: 3;
+        top: 3px;
+        width: 56px;
+        will-change: transform;
+        z-index: 1;
       }
 
-      #cylinder::after {
-        background: #65d7f1;
+      #crank-wheel:active { cursor: grabbing; }
+
+      #crank-spoke {
+        background: linear-gradient(90deg, #567482, #d5f7ff, #567482);
         border-radius: 99px;
-        bottom: 9px;
-        box-shadow: 0 0 9px #46c8ec;
-        content: '';
-        height: 6px;
+        height: 4px;
         left: 9px;
         position: absolute;
-        right: 9px;
+        top: 25px;
+        width: 36px;
       }
 
-      #pump-card.returning #pump-handle {
-        transition: transform 150ms cubic-bezier(.18,.9,.2,1);
+      #crank-knob {
+        background: linear-gradient(145deg, #effcff, #5ed3ed);
+        border: 1px solid #e3fbff;
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(77, 217, 247, .55);
+        height: 12px;
+        position: absolute;
+        right: 4px;
+        top: 21px;
+        width: 12px;
       }
 
-      #pump-card.cooldown #pump-handle { filter: saturate(.45); }
+      #crank-center {
+        background: #b9f3ff;
+        border: 2px solid #274553;
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(93, 221, 250, .48);
+        height: 10px;
+        left: 22px;
+        position: absolute;
+        top: 22px;
+        width: 10px;
+      }
+
+      #crank-wrap.cooldown #crank-wheel {
+        filter: saturate(.4);
+      }
 
       @media (max-width: 600px) {
         #hud {
-          bottom: 10px;
-          right: 10px;
-          transform: scale(.88);
-          transform-origin: bottom right;
+          bottom: 8px;
+          right: 8px;
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        #dark-veil, #glare-veil, #eye, #pump-handle { transition-duration: 1ms !important; }
+        #dark-veil, #glare-veil, #eye { transition-duration: 1ms !important; }
         .air-particle { animation-duration: 1ms; }
       }
     </style>
@@ -340,16 +312,14 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
       </div>
 
       <div id="percent" aria-live="polite">100%</div>
+      <div id="crank-count" aria-label="Completed crank turns">↻ 0</div>
 
-      <div id="pump-card" aria-label="Sight pump">
-        <div id="pressure-track"><div id="pressure-fill"></div></div>
-        <div id="pump-ready-dot"></div>
-        <div id="pump-stage">
-          <div id="pump-handle" role="slider" aria-label="Drag sight pump down and release" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
-            <div id="grip">PUMP</div>
-            <div id="rod"></div>
-          </div>
-          <div id="cylinder"></div>
+      <div id="crank-wrap" aria-label="Sight crank">
+        <div id="crank-progress"></div>
+        <div id="crank-wheel" role="slider" aria-label="Spin the sight crank in circles" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+          <div id="crank-spoke"></div>
+          <div id="crank-knob"></div>
+          <div id="crank-center"></div>
         </div>
       </div>
     </div>
@@ -357,21 +327,23 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
     document.documentElement.appendChild(host);
     const darkVeil = shadow.querySelector('#dark-veil');
     const glareVeil = shadow.querySelector('#glare-veil');
+    const hud = shadow.querySelector('#hud');
     const percent = shadow.querySelector('#percent');
+    const crankCount = shadow.querySelector('#crank-count');
     const eye = shadow.querySelector('#eye');
     const eyeCard = shadow.querySelector('#eye-card');
     const iris = shadow.querySelector('#iris');
     const pupil = shadow.querySelector('#pupil');
     const veins = shadow.querySelectorAll('.vein');
-    const pumpCard = shadow.querySelector('#pump-card');
-    const pumpHandle = shadow.querySelector('#pump-handle');
-    const pressureFill = shadow.querySelector('#pressure-fill');
+    const crankWrap = shadow.querySelector('#crank-wrap');
+    const crankWheel = shadow.querySelector('#crank-wheel');
+    const crankProgress = shadow.querySelector('#crank-progress');
     const airLayer = shadow.querySelector('#air-layer');
-    let state = { sight: 100, updatedAt: Date.now() };
+    let state = { sight: 100, updatedAt: Date.now(), cranks: 0 };
     let pointerId = null;
-    let strokeStartY = 0;
-    let strokePx = 0;
-    let strokeReady = false;
+    let lastPointerAngle = 0;
+    let crankRotation = 0;
+    let turnProgress = 0;
     let cooldownUntil = 0;
     const clampSight = (value) => Math.min(MAX_SIGHT, Math.max(0, value));
     const isSightState = (value) => {
@@ -385,15 +357,15 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         const elapsedSeconds = Math.max(0, now - state.updatedAt) / 1000;
         return clampSight(state.sight - elapsedSeconds * DECAY_PER_SECOND);
     };
-    const saveSight = (sight) => {
-        state = { sight: clampSight(sight), updatedAt: Date.now() };
+    const saveSight = (sight, cranks = state.cranks) => {
+        state = { sight: clampSight(sight), updatedAt: Date.now(), cranks };
         chrome.storage.local.set({ [STORAGE_KEY]: state });
     };
     const createAirBurst = (hot) => {
-        const pumpRect = pumpCard.getBoundingClientRect();
+        const crankRect = crankWrap.getBoundingClientRect();
         const eyeRect = eyeCard.getBoundingClientRect();
-        const startX = pumpRect.left + pumpRect.width / 2;
-        const startY = pumpRect.top + 28;
+        const startX = crankRect.left + crankRect.width / 2;
+        const startY = crankRect.top + crankRect.height / 2;
         const travelX = eyeRect.left + eyeRect.width / 2 - startX;
         const travelY = eyeRect.top + eyeRect.height / 2 - startY;
         for (let index = 0; index < 7; index++) {
@@ -411,68 +383,71 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
             });
         }
     };
-    const setStroke = (value) => {
-        strokePx = Math.min(PUMP_STROKE_PX, Math.max(0, value));
-        const strokeProgress = strokePx / PUMP_STROKE_PX;
-        strokeReady = strokeProgress >= 0.96;
-        pumpHandle.style.transform = `translateY(${strokePx}px)`;
-        pumpHandle.setAttribute('aria-valuenow', Math.round(strokeProgress * 100).toString());
-        pressureFill.style.transform = `scaleX(${strokeProgress})`;
-        pumpCard.classList.toggle('ready', strokeReady);
+    const updateCrankProgress = () => {
+        const ratio = Math.min(1, turnProgress / FULL_CRANK_TURN);
+        crankProgress.style.background = `conic-gradient(#74eaff ${ratio * 360}deg, transparent 0)`;
+        crankWheel.setAttribute('aria-valuenow', Math.round(ratio * 100).toString());
     };
-    const finishStroke = (canComplete) => {
-        if (pointerId === null) {
+    const completeCrankTurn = () => {
+        if (performance.now() < cooldownUntil) {
             return;
         }
-        const completed = canComplete && strokeReady;
-        pointerId = null;
-        pumpCard.classList.remove('ready');
-        pumpCard.classList.add('returning');
-        pressureFill.style.transform = 'scaleX(0)';
-        setStroke(0);
-        if (completed) {
-            cooldownUntil = performance.now() + PUMP_COOLDOWN_MS;
-            pumpCard.classList.add('cooldown');
-            const nextSight = sightAt(Date.now()) + GAIN_PER_PUMP;
-            saveSight(nextSight);
-            createAirBurst(nextSight > 100);
-            window.setTimeout(() => pumpCard.classList.remove('cooldown'), PUMP_COOLDOWN_MS);
-        }
-        window.setTimeout(() => pumpCard.classList.remove('returning'), 160);
+        cooldownUntil = performance.now() + PUMP_COOLDOWN_MS;
+        crankWrap.classList.add('cooldown');
+        const nextSight = sightAt(Date.now()) + GAIN_PER_PUMP;
+        saveSight(nextSight, state.cranks + 1);
+        createAirBurst(nextSight > 100);
+        window.setTimeout(() => crankWrap.classList.remove('cooldown'), PUMP_COOLDOWN_MS);
     };
-    pumpHandle.addEventListener('pointerdown', (event) => {
-        if (pointerId !== null
-            || pumpCard.classList.contains('returning')
-            || performance.now() < cooldownUntil) {
+    const pointerAngle = (event) => {
+        const bounds = crankWheel.getBoundingClientRect();
+        return Math.atan2(event.clientY - (bounds.top + bounds.height / 2), event.clientX - (bounds.left + bounds.width / 2));
+    };
+    crankWheel.addEventListener('pointerdown', (event) => {
+        if (pointerId !== null) {
             return;
         }
         pointerId = event.pointerId;
-        strokeStartY = event.clientY;
-        strokeReady = false;
-        pumpHandle.setPointerCapture(event.pointerId);
-        setStroke(0);
+        lastPointerAngle = pointerAngle(event);
+        crankWheel.setPointerCapture(event.pointerId);
         event.preventDefault();
     });
-    pumpHandle.addEventListener('pointermove', (event) => {
+    crankWheel.addEventListener('pointermove', (event) => {
         if (event.pointerId !== pointerId) {
             return;
         }
-        setStroke(event.clientY - strokeStartY);
+        const bounds = crankWheel.getBoundingClientRect();
+        const distance = Math.hypot(event.clientX - (bounds.left + bounds.width / 2), event.clientY - (bounds.top + bounds.height / 2));
+        if (distance < bounds.width * 0.24 || distance > bounds.width * 1.25) {
+            return;
+        }
+        const angle = pointerAngle(event);
+        let delta = angle - lastPointerAngle;
+        if (delta > Math.PI)
+            delta -= FULL_CRANK_TURN;
+        if (delta < -Math.PI)
+            delta += FULL_CRANK_TURN;
+        lastPointerAngle = angle;
+        crankRotation += delta;
+        turnProgress += Math.abs(delta);
+        crankWheel.style.transform = `rotate(${crankRotation}rad)`;
+        if (turnProgress >= FULL_CRANK_TURN && performance.now() >= cooldownUntil) {
+            turnProgress -= FULL_CRANK_TURN;
+            completeCrankTurn();
+        }
+        updateCrankProgress();
         event.preventDefault();
     });
-    pumpHandle.addEventListener('pointerup', (event) => {
+    const finishCranking = (event) => {
         if (event.pointerId === pointerId) {
-            finishStroke(true);
+            pointerId = null;
         }
-    });
-    pumpHandle.addEventListener('pointercancel', (event) => {
-        if (event.pointerId === pointerId) {
-            finishStroke(false);
-        }
-    });
-    pumpHandle.addEventListener('lostpointercapture', () => {
+    };
+    crankWheel.addEventListener('pointerup', finishCranking);
+    crankWheel.addEventListener('pointercancel', finishCranking);
+    crankWheel.addEventListener('lostpointercapture', () => {
         if (pointerId !== null) {
-            finishStroke(false);
+            pointerId = null;
         }
     });
     const render = () => {
@@ -486,12 +461,15 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         darkVeil.style.backdropFilter = `blur(${underBlur.toFixed(1)}px)`;
         darkVeil.style.setProperty('-webkit-backdrop-filter', `blur(${underBlur.toFixed(1)}px)`);
         darkVeil.classList.toggle('blackout', blackout);
+        hud.classList.toggle('blackout', blackout);
         glareVeil.style.opacity = pressure.toFixed(3);
         glareVeil.style.backdropFilter = `blur(${glareBlur.toFixed(1)}px)`;
         glareVeil.style.setProperty('-webkit-backdrop-filter', `blur(${glareBlur.toFixed(1)}px)`);
         percent.textContent = `${Math.floor(sight)}%`;
         percent.classList.toggle('hidden', blackout);
         percent.style.color = pressure > 0 ? '#ffd15c' : '#bff4ff';
+        crankCount.textContent = `↻ ${state.cranks}`;
+        crankCount.classList.toggle('hidden', blackout);
         const aperture = sight <= 100 ? Math.max(0.07, sight / 100) : 1;
         eye.style.transform = `scaleY(${aperture})`;
         eyeCard.classList.toggle('overpressure', pressure > 0.01);
@@ -510,6 +488,9 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
             state = {
                 sight: clampSight(storedState.sight),
                 updatedAt: storedState.updatedAt,
+                cranks: Number.isFinite(storedState.cranks)
+                    ? Math.max(0, Math.floor(storedState.cranks))
+                    : 0,
             };
         }
         else {
@@ -525,6 +506,9 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
             state = {
                 sight: clampSight(nextState.sight),
                 updatedAt: nextState.updatedAt,
+                cranks: Number.isFinite(nextState.cranks)
+                    ? Math.max(0, Math.floor(nextState.cranks))
+                    : state.cranks,
             };
         }
     });

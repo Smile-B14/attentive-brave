@@ -1,24 +1,25 @@
 # Attentive Brave
 
 Attentive Brave adds a mandatory sight-pump overlay to Brave desktop pages.
-Sight starts at 100%, drains continuously by 0.35 percentage points every 100
-ms, and gains 3 points after each completed pump stroke.
+Sight starts at 100%, drains continuously by 0.30 percentage points every 100
+ms, and gains 3 points after each completed crank turn.
 
 ## Behavior
 
-- A compact, non-blocking HUD at the bottom-right contains an animated SVG eye,
-  percentage badge, physical T-bar pump, and stroke-pressure indicator.
-- A stroke counts only after the T-bar is dragged fully down and released.
-  Strokes have a 150 ms cooldown and sight is capped at 180%.
+- A compact, mostly transparent HUD at the bottom-right contains an animated SVG
+  eye, percentage badge, and circular mouse/touch crank.
+- Rotating the crank one complete revolution restores 3 points. Turns have a 150
+  ms cooldown and sight is capped at 180%.
+- A compact persistent counter records completed crank revolutions.
 - Below 100%, the page darkens with `1 - sight / 100` opacity.
 - Below 40%, blur rises progressively to 16 px at 0%.
 - At 0%, the website viewport is silently black and blocked. The percentage is
-  hidden, leaving only the eye and pump.
+  hidden, leaving only the eye and crank.
 - Above 100%, the page turns progressively white, reaching full glare and 12 px
   blur at 180%.
 - Overpressure contracts the pupil, reveals orange and yellow eye veins, and
   increases eye vibration with pressure.
-- Successful strokes send animated air particles from the pump to the eye.
+- Successful turns send animated air particles from the crank to the eye.
 - Sight state is shared across tabs and survives navigation and browser
   restarts.
 
