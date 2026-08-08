@@ -469,7 +469,7 @@ if (window.top === window.self && !document.querySelector('#attentive-brave')) {
         const blackout = sight <= 0.02;
         const frameSeconds = Math.min(0.05, Math.max(0, frameTime - lastFrameTime) / 1000);
         lastFrameTime = frameTime;
-        if (sight < 100) {
+        if (sight < 100 && pointerId === null) {
             automaticRotation -= frameSeconds * (0.55 + blindness * 2.2);
         }
         crankWheel.style.transform = `rotate(${crankRotation + automaticRotation}rad)`;

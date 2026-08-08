@@ -8,12 +8,13 @@ ms, and gains 3 points after each completed crank turn.
 
 - A compact, mostly transparent HUD at the bottom-right contains an animated SVG
   eye, percentage badge, and circular mouse/touch crank.
+- The extension uses a custom eye-and-crank logo in Brave's extension manager.
 - Rotating the crank one complete revolution restores 3 points. Turns have a 150
   ms cooldown and sight is capped at 180%.
 - Counterclockwise turns remove 3 points. Both directions increase the compact
   persistent turn counter.
 - As sight closes, the crank visually rotates backward without affecting power
-  or the counter.
+  or the counter. Automatic rotation pauses while the user holds the crank.
 - Below 100%, the page darkens with `1 - sight / 100` opacity.
 - Below 40%, blur rises progressively to 16 px at 0%.
 - At 0%, the website viewport is silently black and blocked. The percentage is
